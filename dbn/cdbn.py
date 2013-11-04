@@ -31,85 +31,10 @@ from helpers import smartshow, list_images
 
 
 class ConvolutionalRBM(BaseEstimator, TransformerMixin):
-    """Convolutional Restricted Boltzmann Machine (CRBM).
 
-    A Restricted Boltzmann Machine with binary visible units and
-    binary hiddens. Parameters are estimated using Stochastic Maximum
-    Likelihood (SML), also known as Persistent Contrastive Divergence (PCD)
-    [2].
-
-    The time complexity of this implementation is ``O(d ** 2)`` assuming
-    d ~ n_features ~ n_components.
-
-    Parameters
-    ----------
-    n_components : int, optional
-        Number of binary hidden units.
-
-    learning_rate : float, optional
-        The learning rate for weight updates. It is *highly* recommended
-        to tune this hyper-parameter. Reasonable values are in the
-        10**[0., -3.] range.
-
-    batch_size : int, optional
-        Number of examples per minibatch.
-
-    n_iter : int, optional
-        Number of iterations/sweeps over the training dataset to perform
-        during training.
-
-    verbose : int, optional
-        The verbosity level. Enabling it (with a non-zero value) will compute 
-        the log-likelihood of each mini-batch and hence cause a runtime overhead
-        in the order of 10%.
-
-    random_state : integer or numpy.RandomState, optional
-        A random number generator instance to define the state of the
-        random permutations generator. If an integer is given, it fixes the
-        seed. Defaults to the global numpy random number generator.
-
-    Attributes
-    ----------
-    `components_` : array-like, shape (n_components, n_features), optional
-        Weight matrix, where n_features in the number of visible
-        units and n_components is the number of hidden units.
-
-    `intercept_hidden_` : array-like, shape (n_components,), optional
-        Biases of the hidden units.
-
-    `intercept_visible_` : array-like, shape (n_features,), optional
-        Biases of the visible units.
-
-    Examples
-    --------
-
-    >>> import numpy as np
-    >>> from sklearn.neural_network import BernoulliRBM
-    >>> X = np.array([[0, 0, 0], [0, 1, 1], [1, 0, 1], [1, 1, 1]])
-    >>> model = BernoulliRBM(n_components=2)
-    >>> model.fit(X)
-    BernoulliRBM(batch_size=10, learning_rate=0.1, n_components=2, n_iter=10,
-           random_state=None, verbose=False)
-
-    References
-    ----------
-
-    [1] Hinton, G. E., Osindero, S. and Teh, Y. A fast learning algorithm for
-        deep belief nets. Neural Computation 18, pp 1527-1554.
-        http://www.cs.toronto.edu/~hinton/absps/fastnc.pdf
-
-    [2] Tieleman, T. Training Restricted Boltzmann Machines using
-        Approximations to the Likelihood Gradient. International Conference
-        on Machine Learning (ICML) 2008
-    """
-    def __init__(self, n_components=256, learning_rate=0.1, batch_size=10,
-                 n_iter=10, verbose=False, random_state=None):
-        self.n_components = n_components
-        self.learning_rate = learning_rate
-        self.batch_size = batch_size
-        self.n_iter = n_iter
-        self.verbose = verbose
-        self.random_state = random_state
+    def __init__(self):
+        self.n_groups = 8
+        
 
     def transform(self, X):
         """Compute the hidden layer activation probabilities, P(h=1|v=X).
