@@ -40,11 +40,11 @@ class ConvolutionalRBM(BaseEstimator, TransformerMixin):
         self.verbose = verbose
         self.lr = learning_rate
         self.rng = random_state
-        self.weights = self.rng.normal(.5, .1,
-                                       size=(self.n_hiddens,) + (w_size, w_size))
+        self.weights = .01 * self.rng.normal(0, 1,
+                                             (self.n_hiddens,) + (w_size, w_size))
         self.hiddens = self.rng.uniform(size=(self.n_hiddens,) + self.h_shape)
-        self.h_intercepts = np.ones((self.n_hiddens,) + self.h_shape)
-        self.v_intercept = np.ones((self.v_shape[0] - 2*w_size + 2,
+        self.h_intercepts = np.zeros((self.n_hiddens,) + self.h_shape)
+        self.v_intercept = np.zeros((self.v_shape[0] - 2*w_size + 2,
                                            self.v_shape[1] - 2*w_size + 2))
         
 
