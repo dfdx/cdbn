@@ -3,6 +3,8 @@ from __future__ import print_function
 from numpy import array, dot
 import numpy as np
 
+from sklearn.externals.six.moves import xrange
+
 from utils import convolve
 
 
@@ -12,12 +14,14 @@ class ConvRBM(object):
     """
 
     def __init__(self, v_shape, n_hiddens, w_size=7, learning_rate=.05,
-                 random_state=np.random, n_iter=10, verbose=False):
+                 random_state=np.random, n_iter=10, verbose=False,
+                 stride=(2, 2)):
         self.v_shape = v_shape
         self.w_size = w_size
         self.h_shape = (v_shape[0] - w_size + 1, v_shape[1] - w_size + 1)
         self.n_hiddens = n_hiddens
         self.n_iter = n_iter
+        self.stride = stride
         self.verbose = verbose
         self.lr = learning_rate
         self.rng = random_state
@@ -53,4 +57,15 @@ class ConvRBM(object):
             h[k] = np.exp(convolve(v, _ff(self.W[k])) + self.c)
             
 
-            
+
+    def pool(self, I):
+        n_cols, n_rows = I.shape[:2]
+        y_stride, x_stride = self.shape[:2]
+        blocks = np.zeros(I.shape)
+        for r in xrange(np.ceil(float(n_rows) / y_stride)):
+            rows = range(r * y_stride, (r + 1) * y_stride)
+            for c in xrange(np.ceil(float(n_cols) / x_stride)):
+                cols = range(c * x_stride, (c + 1) * x_stride)
+                block_val = np.sqeeze(I[:, rows, cols].sum()) # TODO: check idxing
+                # blocks[:, rows, cols] = np.tile(block_val[2, 3, 1])
+        return blocks
