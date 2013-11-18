@@ -156,3 +156,17 @@ def run_digits():
     crbm = ConvRBM((8, 8), 100, w_size=3, n_iter=3, verbose=True)
     crbm.fit(X)
     return crbm
+
+
+def run_mnist():
+    import os
+    from sklearn import datasets
+    # digits = datasets.load_digits()
+    custom_data_home = os.getcwd() + '/sk_data'
+    digits = datasets.fetch_mldata('MNIST original', data_home=custom_data_home)
+    X = np.asarray(digits.data, 'float32')
+    X = X[:100]
+    X /= 256
+    crbm = ConvRBM((28, 28), 40, w_size=13, n_iter=10, verbose=True)
+    crbm.fit(X)
+    return crbm
