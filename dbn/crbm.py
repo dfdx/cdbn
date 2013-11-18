@@ -42,6 +42,8 @@ class ConvRBM(object):
         self.dc = np.zeros(self.c.shape)
         self.w_penalty = .05
         self.momentum = .9
+        self.sparse_gain = 1
+        self.sparsity = .02
 
     def fit(self, X):
         n_batches = X.shape[0]
@@ -54,12 +56,17 @@ class ConvRBM(object):
                 self._apply_gradients(dW, db, dc)
                 sum_err += self._batch_err(v)
             print('Iter %d: error = %d' % (itr, sum_err))
+            dc_sparse = self.lr * self.sparse_gain * \
+                        (self.sparsity - self.h_mean.mean(axis=2).mean(axis=1))
+            self.c = self.c + dc_sparse
                 
 
     def _gradients(self, v):
         v_mean, h_mean, h_mean0 = self._gibbs(v)
-        # SIDE EFFECT: save v_mean for future use (in _batch_err)
+        # SIDE EFFECT: save means for future use (in _batch_err and
+        # sparsity regularization)
         self.v_mean = v_mean
+        self.h_mean = h_mean
         dW = np.zeros(self.W.shape)
         for k in xrange(self.n_hiddens):
             dW[k] = convolve2d(v, self._ff(h_mean[k]), 'valid') - \
@@ -139,8 +146,11 @@ class ConvRBM(object):
 
 
 def run_digits():
+    import os
     from sklearn import datasets
-    digits = datasets.load_digits()
+    # digits = datasets.load_digits()
+    custom_data_home = os.getcwd() + '/sk_data'
+    digits = datasets.fetch_mldata('MNIST original', data_home=custom_data_home)
     X = np.asarray(digits.data, 'float32')
     X /= 256
     crbm = ConvRBM((8, 8), 100, w_size=3, n_iter=3, verbose=True)
