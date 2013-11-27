@@ -22,8 +22,7 @@ from sklearn.utils.extmath import logistic_sigmoid
 from scipy import ndimage as nd
 from skimage.filter import gabor_kernel
 
-from helpers import smartshow, list_images
-from utils import random_uniform, convolve
+from utils import smartshow, list_images
 
 
 
